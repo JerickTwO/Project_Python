@@ -1,96 +1,81 @@
 import pygame
 import random
 
-# Inicialización de Pygame
+# Inicializa Pygame
 pygame.init()
 
-# Configuración de la pantalla
-width, height = 800, 600
-screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Esquiva Asteroides")
+# Configuración de la ventana
+width, height = 640, 480
+win = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Snake Game")
 
 # Colores
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
+black = (0, 0, 0)
+white = (255, 255, 255)
 
-# Cargar imágenes de la nave espacial y asteroides
-spaceship = pygame.image.load('spaceship.png')
-spaceship = pygame.transform.scale(spaceship, (50, 50))
-asteroid = pygame.image.load('asteroid.png')
-asteroid = pygame.transform.scale(asteroid, (50, 50))
+# Tamaño del bloque de la serpiente y posición inicial
+snake_block = 10
+snake_speed = 15
 
-# Nave espacial
-spaceship_rect = spaceship.get_rect()
-spaceship_x = width // 2
-spaceship_y = height - 100
-spaceship_speed = 5
+x1 = width // 2
+y1 = height // 2
 
-# Asteroides
-asteroids = []
-asteroid_speed = 5
+x1_change = 0
+y1_change = 0
 
-for _ in range(5):
-    asteroid_rect = asteroid.get_rect()
-    asteroid_x = random.randint(0, width - asteroid_rect.width)
-    asteroid_y = random.randint(0, height // 2)
-    asteroids.append((asteroid, asteroid_rect, asteroid_x, asteroid_y))
+# Lista del cuerpo de la serpiente
+snake_list = []
+length_of_snake = 1
 
-# Puntuación y vidas
-score = 0
-lives = 3
-font = pygame.font.Font(None, 36)
+# Función para dibujar la serpiente en la ventana
+def draw_snake(snake_block, snake_list):
+    for segment in snake_list:
+        pygame.draw.rect(win, black, [segment[0], segment[1], snake_block, snake_block])
+
+game_over = False
 
 # Bucle principal del juego
-running = True
-clock = pygame.time.Clock()
-
-while running:
+while not game_over:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
+            game_over = True
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                x1_change = -snake_block
+                y1_change = 0
+            elif event.key == pygame.K_RIGHT:
+                x1_change = snake_block
+                y1_change = 0
+            elif event.key == pygame.K_UP:
+                y1_change = -snake_block
+                x1_change = 0
+            elif event.key == pygame.K_DOWN:
+                y1_change = snake_block
+                x1_change = 0
 
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT] and spaceship_x > 0:
-        spaceship_x -= spaceship_speed
-    if keys[pygame.K_RIGHT] and spaceship_x < width - spaceship_rect.width:
-        spaceship_x += spaceship_speed
+    # Evita que la serpiente salga de la ventana
+    if x1 >= width or x1 < 0 or y1 >= height or y1 < 0:
+        game_over = True
 
-    spaceship_rect.topleft = (spaceship_x, spaceship_y)
+    x1 += x1_change
+    y1 += y1_change
+    win.fill(white)
 
-    # Actualizar la posición de los asteroides
-    for i, (_, asteroid_rect, asteroid_x, asteroid_y) in enumerate(asteroids):
-        asteroid_y += asteroid_speed
-        asteroid_rect.topleft = (asteroid_x, asteroid_y)
+    snake_head = [x1, y1]
+    snake_list.append(snake_head)
 
-        # Colisión con la nave espacial
-        if spaceship_rect.colliderect(asteroid_rect):
-            asteroids[i] = (asteroid, asteroid_rect, random.randint(0, width - asteroid_rect.width), 0)
-            lives -= 1
+    if len(snake_list) > length_of_snake:
+        del snake_list[0]
 
-        # Si un asteroide llega al fondo, reinícialo en la parte superior
-        if asteroid_y > height:
-            asteroids[i] = (asteroid, asteroid_rect, random.randint(0, width - asteroid_rect.width), 0)
-            score += 1
+    for segment in snake_list[:-1]:
+        if segment == snake_head:
+            game_over = True
 
-    # Dibujar todo en la pantalla
-    screen.fill(WHITE)
-    screen.blit(spaceship, spaceship_rect)
-    for (asteroid, asteroid_rect, asteroid_x, asteroid_y) in asteroids:
-        screen.blit(asteroid, asteroid_rect.topleft)
-
-    # Mostrar puntuación y vidas en la pantalla
-    score_text = font.render(f"Puntuación: {score}", True, RED)
-    lives_text = font.render(f"Vidas: {lives}", True, RED)
-    screen.blit(score_text, (10, 10))
-    screen.blit(lives_text, (10, 50))
-
+    draw_snake(snake_block, snake_list)
     pygame.display.update()
 
-    # Verificar si el jugador ha perdido
-    if lives <= 0:
-        running = False
+    # Velocidad de la serpiente
+    pygame.time.delay(snake_speed)
 
-    clock.tick(60)
-
-# Juego terminado
+# Cierra Pygame
 pygame.quit()
