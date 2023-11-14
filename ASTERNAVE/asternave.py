@@ -12,6 +12,8 @@ pygame.display.set_caption("Esquiva Asteroides")
 # Colores
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+BLUE = (0, 0, 255)
+DARK_BLUE = (0, 0, 128)
 RED = (255, 0, 0)
 
 # Cargar imágenes de la nave espacial y asteroides
@@ -90,13 +92,22 @@ while running:
         if asteroid_y > height:
             asteroids[i] = (asteroid, asteroid_rect, random.randint(0, width - asteroid_rect.width), 0, random.randint(-2, 2))
 
-    # Dibujar todo en la pantalla
-    screen.fill(BLACK)
-    screen.blit(spaceship, spaceship_rect)
-    for (asteroid, asteroid_rect, asteroid_x, asteroid_y, _) in asteroids:
-        screen.blit(asteroid, asteroid_rect.topleft)
-    for bullet_pos in bullets:
-        pygame.draw.rect(screen, RED, (bullet_pos[0], bullet_pos[1], 2, 10))
+        # Dibujar todo en la pantalla
+        screen.fill(DARK_BLUE)  # Cambiar el fondo a un tono azul oscuro
+        screen.blit(spaceship, spaceship_rect)
+        for (asteroid, asteroid_rect, asteroid_x, asteroid_y, _) in asteroids:
+            screen.blit(asteroid, asteroid_rect.topleft)
+        for bullet_pos in bullets:
+            pygame.draw.rect(screen, RED, (bullet_pos[0], bullet_pos[1], 2, 10))
+        
+        # Mostrar puntuación y vidas en la pantalla
+        score_text = font.render(f"Puntuación: {score}", True, RED)
+        lives_text = font.render(f"Vidas: {lives}", True, RED)
+        screen.blit(score_text, (10, 10))
+        screen.blit(lives_text, (10, 50))
+        
+        pygame.display.update()
+
 
     # Mostrar puntuación y vidas en la pantalla
     score_text = font.render(f"Puntuación: {score}", True, RED)
