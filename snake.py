@@ -76,6 +76,33 @@ while not game_over:
 
     # Snake speed
     pygame.time.delay(snake_speed)
+import pygame
 
+
+# Direction 
+direction = 'RIGHT'  
+
+# Main game loop
+while not game_over:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            game_over = True
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT and direction != 'RIGHT':
+                x1_change = -snake_block
+                y1_change = 0
+                direction = 'LEFT'
+            elif event.key == pygame.K_RIGHT and direction != 'LEFT':
+                x1_change = snake_block
+                y1_change = 0
+                direction = 'RIGHT'
+            elif event.key == pygame.K_UP and direction != 'DOWN':
+                y1_change = -snake_block
+                x1_change = 0
+                direction = 'UP'
+            elif event.key == pygame.K_DOWN and direction != 'UP':
+                y1_change = snake_block
+                x1_change = 0
+                direction = 'DOWN'
 # Quit Pygame
 pygame.quit()
