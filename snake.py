@@ -22,7 +22,7 @@ texto.color("white")
 texto.penup()
 texto.hideturtle()
 texto.goto(0,260)
-texto.write("Puntaje      Mayor Puntaje",
+texto.write("Puntaje       Mayor Puntaje",
              align = "center", font =("Courier", 20, "normal"))
 
 #Cabeza
