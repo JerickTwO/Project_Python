@@ -45,7 +45,6 @@ comida.color('red')
 #Cuerpo
 segmentos = []
 
-
 #Funciones
 def arriba():
     cabeza.direction = 'up'
